@@ -10,7 +10,7 @@ public class CSVReader {
     public CSVReader() {
     }
 
-    public void readTasks(String taskPath) {
+    public ArrayList<Tarea> readTasks(String taskPath) {
 
         // Obtengo una lista con las lineas del archivo
         // lines.get(0) tiene la primer linea del archivo
@@ -28,10 +28,11 @@ public class CSVReader {
             // Aca instanciar lo que necesiten en base a los datos leidos
             tareas.add(new Tarea(id, nombre, tiempo, critica, prioridad));
         }
+        return tareas;
 
     }
 
-    public void readProcessors(String processorPath) {
+    public ArrayList<Procesador> readProcessors(String processorPath) {
 
         // Obtengo una lista con las lineas del archivo
         // lines.get(0) tiene la primer linea del archivo
@@ -49,6 +50,7 @@ public class CSVReader {
             // Aca instanciar lo que necesiten en base a los datos leidos
             procesadores.add(new Procesador(id, codigo, refrigerado, anio));
         }
+        return procesadores;
 
     }
 
