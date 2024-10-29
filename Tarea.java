@@ -7,7 +7,6 @@ public class Tarea {
     private Boolean critica;
     private Integer prioridad;
 
-    // Constructor
     public Tarea(String id, String nombre, Integer tiempo, Boolean critica, Integer prioridad) {
         this.id = id;
         this.nombre = nombre;
@@ -16,7 +15,6 @@ public class Tarea {
         this.prioridad = prioridad;
     }
 
-    // Getters
     public String getId() {
         return id;
     }

@@ -6,7 +6,6 @@ public class Procesador {
     private Boolean refrigerado;
     private Integer anio;
 
-    // Constructor
     public Procesador(String id, String codigo, Boolean refrigerado, Integer anio) {
         this.id = id;
         this.codigo = codigo;
@@ -14,7 +13,6 @@ public class Procesador {
         this.anio = anio;
     }
 
-    // Getters
     public String getId() {
         return id;
     }
