@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
 /**
  * NO modificar la interfaz de esta clase ni sus métodos públicos. Sólo se podrá
@@ -14,7 +13,7 @@ public class Servicios {
 
     private LinkedList<Tarea> listaTareas;
     private Map<String, Tarea> mapaTareas;
-    private TreeSet<Tarea> arbolTareas;
+    private Arbol arbolTareas;
 
     /*
      * Expresar la complejidad temporal del constructor.
@@ -22,7 +21,7 @@ public class Servicios {
     public Servicios(String pathProcesadores, String pathTareas) {
         this.listaTareas = new LinkedList<>();
         this.mapaTareas = new HashMap<>();
-        this.arbolTareas = new TreeAlgo();
+        this.arbolTareas = new Arbol();
 
         CSVReader reader = new CSVReader();
         reader.readProcessors(pathProcesadores);
@@ -63,6 +62,8 @@ public class Servicios {
      * Expresar la complejidad temporal del servicio 3.
      */
     public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
+        List<Tarea> resultado = new ArrayList<>();
+        return resultado;
     }
 
 }
