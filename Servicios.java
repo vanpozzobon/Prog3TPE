@@ -35,15 +35,28 @@ public class Servicios {
     }
 
     /*
-     * Expresar la complejidad temporal del servicio 1.
+     * Complejidad temporal O(1) ya que utilizamos un hashMap para almacenar 
+     * por ID la tarea.
      */
     public Tarea servicio1(String ID) {
+        return mapaTareas.get(ID);
     }
 
     /*
-     * Expresar la complejidad temporal del servicio 2.
+     * Complejidad temporal O(n) ya que debe recorrer toda la LinkedList
+     * para corroborar tarea por tarea
      */
     public List<Tarea> servicio2(boolean esCritica) {
+        List<Tarea> resultado = new ArrayList<>();
+
+        for (Tarea tarea : listaTareas) {
+            if (tarea.isCritica() == esCritica) {
+                resultado.add(tarea);
+            }
+        }
+
+        return resultado;
+
     }
 
     /*
