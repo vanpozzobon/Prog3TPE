@@ -30,6 +30,7 @@ public class Servicios {
         for (Tarea tarea : tareasData) {
             listaTareas.add(tarea); // Añadir a LinkedList
             mapaTareas.put(tarea.getId(), tarea); // Añadir a HashMap usando el ID como clave
+            arbolTareas.add(tarea);
         }
     }
 
@@ -43,7 +44,7 @@ public class Servicios {
 
     /*
      * Complejidad temporal O(n) ya que debe recorrer toda la LinkedList
-     * para corroborar tarea por tarea
+     * para corroborar tarea por tarea y asi obtener si es critica 
      */
     public List<Tarea> servicio2(boolean esCritica) {
         List<Tarea> resultado = new ArrayList<>();
@@ -63,7 +64,9 @@ public class Servicios {
      */
     public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
         List<Tarea> resultado = new ArrayList<>();
+        arbolTareas.obtenerTareasEnRango(prioridadInferior, prioridadSuperior, resultado);
         return resultado;
+
     }
 
 }
