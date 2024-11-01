@@ -1,3 +1,4 @@
+import java.util.Objects;
 
 public class Tarea {
 
@@ -33,5 +34,18 @@ public class Tarea {
 
     public Integer getPrioridad() {
         return prioridad;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tarea tarea = (Tarea) o;
+        return Objects.equals(id, tarea.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

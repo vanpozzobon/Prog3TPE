@@ -1,18 +1,26 @@
+import java.util.LinkedList;
 
 public class TreeNode {
-
-    private Tarea tarea;
+    private int prioridad;
+    private LinkedList<Tarea> tareas;
     private TreeNode izq;
     private TreeNode der;
 
-    public TreeNode(Tarea t) {
-        this.tarea = t;
+    public TreeNode(Tarea tarea) {
+        this.prioridad = tarea.getPrioridad();
+        this.tareas = new LinkedList<>();
+        this.addTareaNodo(tarea);
         this.izq = null;
         this.der = null;
     }
-
-    public Tarea getTarea() {
-        return tarea;
+    public void addTareaNodo(Tarea tarea){
+        this.tareas.addFirst(tarea);
+    }
+    public int getPrioridad(){
+        return this.prioridad;
+    }
+    public LinkedList<Tarea> getTareas() {
+        return tareas;
     }
 
     public TreeNode getIzq() {
@@ -21,10 +29,6 @@ public class TreeNode {
 
     public TreeNode getDer() {
         return der;
-    }
-
-    public void setTarea(Tarea t) {
-        this.tarea = t;
     }
 
     public void setIzq(TreeNode i) {

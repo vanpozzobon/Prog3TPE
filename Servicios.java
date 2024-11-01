@@ -60,13 +60,12 @@ public class Servicios {
     }
 
     /*
-     * Expresar la complejidad temporal del servicio 3.
+     * En el peor caso la complejidad de obtener todas las tareas en un rango dado es O(n) donde n es la cantidad de tareas
+     * con diferente prioridad. Es O(n) ya que si la prioridad inferior solicitada es menor a la minima prioridad registrada en el arbol
+     * y la prioridad superior solocitada es mayor a la prioridad de mayor rango en el arbol, el recorrido será completo
      */
     public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
-        List<Tarea> resultado = new ArrayList<>();
-        arbolTareas.obtenerTareasEnRango(prioridadInferior, prioridadSuperior, resultado);
-        return resultado;
-
+        return arbolTareas.obtenerTareasEnRango(prioridadInferior, prioridadSuperior);
     }
 
 }
