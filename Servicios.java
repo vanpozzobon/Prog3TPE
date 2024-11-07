@@ -14,6 +14,7 @@ public class Servicios {
     private LinkedList<Tarea> listaTareas;
     private Map<String, Tarea> mapaTareas;
     private Arbol arbolTareas;
+    private LinkedList<Procesador> listaProcesadores;
 
     /*
      * Expresar la complejidad temporal del constructor.
@@ -24,7 +25,7 @@ public class Servicios {
         this.arbolTareas = new Arbol();
 
         CSVReader reader = new CSVReader();
-        reader.readProcessors(pathProcesadores);
+        ArrayList<Procesador> procesadoresData = reader.readProcessors(pathProcesadores);
         ArrayList<Tarea> tareasData = reader.readTasks(pathTareas);
 
         for (Tarea tarea : tareasData) {
@@ -32,6 +33,11 @@ public class Servicios {
             mapaTareas.put(tarea.getId(), tarea); // Añadir a HashMap usando el ID como clave
             arbolTareas.add(tarea);
         }
+
+        for (Procesador procesador : procesadoresData) {
+            listaProcesadores.add(procesador);
+        }
+
     }
 
     /*
@@ -68,4 +74,30 @@ public class Servicios {
         return arbolTareas.obtenerTareasEnRango(prioridadInferior, prioridadSuperior);
     }
 
+    // funcion backtracking(Estado e, int x, Tarea t){
+    //     Si t == null
+    //     si e.es_solucion_optima()
+    //     e.cambiarSolucionOptima();	
+    //     sino
+    //         Obtengo todos los procesadores
+    //         Para cada procesador
+    //                 Si e.getSumaTiempo(procesador) + tarea.tiempo < x y 
+    //             (!tarea.esCritica() || (tarea.esCritica() y e.getCriticas(procesador) < 2)
+    //         e.agregarTarea(procesador,tarea)
+    //         backtracking(e,x,cant+1, e.getNextTarea())
+    //         e.quitarTarea(procesador,tarea)
+    public Estado backtracking(int tiempoMax) {
+        Estado estado = new Estado(listaTareas);
+        backtracking(estado, tiempoMax, estado.getNexTarea());
+        return estado;
+    }
+
+    private void backtracking(Estado estado, int tiempo, Tarea t) {
+
+        if (t == null) {
+            if (estado.getSolucion()) {
+
+            }
+        }
+    }
 }
