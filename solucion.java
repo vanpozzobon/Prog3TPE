@@ -2,7 +2,7 @@
 import java.util.LinkedList;
 import java.util.Map;
 
-public class solucion {
+public class Solucion {
 
     private Map<String, LinkedList<Tarea>> solucion;
 
