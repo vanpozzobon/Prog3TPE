@@ -1,12 +1,12 @@
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
 public class Solucion {
 
     private HashMap<String, LinkedList<Tarea>> solucion;
-    private int tiempoMax = -1;
     public Solucion(){
         this.solucion = new HashMap<String, LinkedList<Tarea>>();
     }
@@ -18,18 +18,11 @@ public class Solucion {
     public boolean esMejorSolucion(Solucion solucion){
         if (solucion == null)
             return false;
-        if (this.tiempoMax < 0)
-            return true;
-        return (solucion.getMaximoTiempo() < this.getMaximoTiempo());
-    }
-
-    public int getMaximoTiempo(){
-        return this.tiempoMax;
+        return (solucion.calcularTiempoMaximoSolucion() < this.calcularTiempoMaximoSolucion());
     }
 
     public void cambiarASolucionOptimizada(Solucion solucion){
         this.solucion = (HashMap<String, LinkedList<Tarea>>) solucion.getSolucion().clone();
-        this.tiempoMax = solucion.getMaximoTiempo();
     }
 
     public void addTareaASolucion(Procesador procesador, Tarea tarea){
@@ -55,5 +48,28 @@ public class Solucion {
             if (listaaux != null)
                 listaaux.remove(tarea);
         }
+    }
+    private int calcularTiempoMaximoSolucion(){
+        int mayor = 0;
+        for (Map.Entry<String, LinkedList<Tarea>> entry : solucion.entrySet()) {
+            int suma = this.calcularTiempoMaximoPorProcesador(entry.getKey());
+            if (suma > mayor)
+                mayor = suma;
+        }
+        return mayor;
+    }
+    private int calcularTiempoMaximoPorProcesador(String key){
+        LinkedList<Tarea> tareas = this.solucion.get(key);
+        int total = 0;
+        for (Tarea tarea : tareas){
+            total += tarea.getTiempo();
+        }
+        return total;
+    }
+
+    public LinkedList<Tarea> getTareasAsociadas(Procesador procesador){
+        if (this.solucion.containsKey(procesador.getId()))
+            return this.solucion.get(procesador.getId());
+        return null;
     }
 }
