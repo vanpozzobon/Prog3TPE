@@ -1,11 +1,9 @@
 
 import java.util.LinkedList;
-import java.util.Map;
 
 public class Estado {
 
-    private Map<String, LinkedList<Tarea>> solucion;
-    private int tiempo;
+    Solucion solucion;
     private int cantEstadosGenerados;
     private Tarea[] arregloTareas;
     private int indice = 0;
@@ -26,20 +24,12 @@ public class Estado {
         return arregloTareas[indice];
     }
 
-    public Map<String, LinkedList<Tarea>> getSolucion() {
+    public Solucion getSolucion() {
         return solucion;
     }
 
-    public void setSolucion(Map<String, LinkedList<Tarea>> solucion) {
+    public void setSolucion(Solucion solucion) {
         this.solucion = solucion;
-    }
-
-    public Integer getTiempo() {
-        return tiempo;
-    }
-
-    public void setTiempo(int t) {
-        this.tiempo = t;
     }
 
     public Integer getCantidadEstados() {
@@ -50,4 +40,27 @@ public class Estado {
         this.cantEstadosGenerados = c;
     }
 
+    public void avanzarTarea() {
+        indice++;
+    }
+
+    public void retrocederTarea() {
+        indice--;
+    }
+
+    public void agregarTarea(Procesador p, Tarea t) {
+        solucion.addTareaASolucion(p, t);
+    }
+
+    public void quitarTarea(Procesador p, Tarea t) {
+        solucion.removeTareaDeSolucion(p, t);
+    }
+
+    public int getTiempo() {
+        return solucion.getMaximoTiempo();
+    }
+
+    public int getTareasCriticas(Procesador p) {
+        return solucion.getCriticas(p);
+    }
 }

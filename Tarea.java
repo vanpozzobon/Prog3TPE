@@ -1,3 +1,4 @@
+
 import java.util.Objects;
 
 public class Tarea {
@@ -24,7 +25,7 @@ public class Tarea {
         return nombre;
     }
 
-    public Integer getTiempo() {
+    public int getTiempo() {
         return tiempo;
     }
 
@@ -38,8 +39,12 @@ public class Tarea {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Tarea tarea = (Tarea) o;
         return Objects.equals(id, tarea.id);
     }

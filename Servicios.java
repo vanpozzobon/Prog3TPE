@@ -86,18 +86,39 @@ public class Servicios {
     //         e.agregarTarea(procesador,tarea)
     //         backtracking(e,x,cant+1, e.getNextTarea())
     //         e.quitarTarea(procesador,tarea)
-    public Estado backtracking(int tiempoMax) {
+    public Solucion backtracking(int tiempoMax) {
         Estado estado = new Estado(listaTareas);
-        backtracking(estado, tiempoMax, estado.getNexTarea());
-        return estado;
+        Solucion solucion = new Solucion();
+        backtracking(estado, tiempoMax, estado.getNexTarea(), solucion);
+        return solucion;
     }
 
-    private void backtracking(Estado estado, int tiempo, Tarea t) {
+    private void backtracking(Estado estado, int x, Tarea t, Solucion s) {
 
         if (t == null) {
-            if (estado.getSolucion()) {
+            if (s.esMejorSolucion(estado.getSolucion())) {
+                s.cambiarASolucionOptimizada(estado.solucion);
+            }
+        } else {
+//             Si procesador.isRefrigerado() || (!procesador.isRefrigerado() Y tiempo_acumulado(procesador) + tarea.getTiempo()) Y 
+//  (!tarea.esCritica() || (tarea.esCritica() y e.getCriticas(procesador) < 2)
+            for (Procesador procesador : listaProcesadores) {
+                // if (procesador.isRefrigerado() || (!procesador.isRefrigerado() && tiempo_acumulado)) {
+                if (estado.getTareasCriticas(procesador) < 2) {
+                    if (!procesador.isRefrigerado()) {
+                        if (estado.getTiempo() + t.getTiempo() < x) {
+                            estado.agregarTarea(procesador, t);
+                            estado.avanzarTarea();
+                            backtracking(estado, x, estado.getNexTarea(), s);
+                            estado.quitarTarea(procesador, t);
+                            estado.retrocederTarea();
+                        }
+                    }
 
+                }
             }
         }
+
     }
+}
 }
