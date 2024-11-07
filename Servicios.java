@@ -14,8 +14,8 @@ public class Servicios {
     private LinkedList<Tarea> listaTareas;
     private Map<String, Tarea> mapaTareas;
     private Arbol arbolTareas;
-    private LinkedList<Procesador> listaProcesadores;
-
+    private ArrayList<Procesador> listaProcesadores;
+    private int maxCantCriticas = 2;
     /*
      * Expresar la complejidad temporal del constructor.
      */
@@ -25,7 +25,7 @@ public class Servicios {
         this.arbolTareas = new Arbol();
 
         CSVReader reader = new CSVReader();
-        ArrayList<Procesador> procesadoresData = reader.readProcessors(pathProcesadores);
+        this.listaProcesadores = reader.readProcessors(pathProcesadores);
         ArrayList<Tarea> tareasData = reader.readTasks(pathTareas);
 
         for (Tarea tarea : tareasData) {
@@ -34,9 +34,9 @@ public class Servicios {
             arbolTareas.add(tarea);
         }
 
-        for (Procesador procesador : procesadoresData) {
+        /*for (Procesador procesador : procesadoresData) {
             listaProcesadores.add(procesador);
-        }
+        }*/
 
     }
 
@@ -90,35 +90,37 @@ public class Servicios {
         Estado estado = new Estado(listaTareas);
         Solucion solucion = new Solucion();
         backtracking(estado, tiempoMax, estado.getNexTarea(), solucion);
+        solucion.setCantEstados(estado.getCantidadEstados());
         return solucion;
     }
 
     private void backtracking(Estado estado, int x, Tarea t, Solucion s) {
-
+        //Si la tarea es null, quiere decir que ya se asignaron todas las tareas
         if (t == null) {
-            if (s.esMejorSolucion(estado.getSolucion())) {
-                s.cambiarASolucionOptimizada(estado.solucion);
+                System.out.println("ENTRA");
+            if (s.esMejorSolucion(estado.getSolucion())){
+                System.out.println("ENTRA MEJOR SOLUCION");
+
+                s.cambiarASolucionOptimizada(estado.getSolucion());
+
             }
         } else {
-//             Si procesador.isRefrigerado() || (!procesador.isRefrigerado() Y tiempo_acumulado(procesador) + tarea.getTiempo()) Y 
-//  (!tarea.esCritica() || (tarea.esCritica() y e.getCriticas(procesador) < 2)
             for (Procesador procesador : listaProcesadores) {
-                // if (procesador.isRefrigerado() || (!procesador.isRefrigerado() && tiempo_acumulado)) {
-                if (estado.getTareasCriticas(procesador) < 2) {
-                    if (!procesador.isRefrigerado()) {
-                        if (estado.getTiempo() + t.getTiempo() < x) {
-                            estado.agregarTarea(procesador, t);
-                            estado.avanzarTarea();
-                            backtracking(estado, x, estado.getNexTarea(), s);
-                            estado.quitarTarea(procesador, t);
-                            estado.retrocederTarea();
-                        }
-                    }
-
+                //Si el procesador es refrigerado o no es refrigerado y el tiempo de las tareas asociadas + la nueva tarea es menor que la indicada por el usuario
+                // Y la tarea no es critica, o es critica y aun no llega al maximo de tareas criticas permitidas
+                if ((procesador.isRefrigerado() ||
+                        (!procesador.isRefrigerado() && estado.getTiempo(procesador) + t.getTiempo() < x))
+                        && (!t.isCritica() ||
+                        (t.isCritica() && estado.getTareasCriticas(procesador) < this.maxCantCriticas))) {
+                    estado.agregarTarea(procesador, t);
+                    estado.avanzarTarea();
+                    backtracking(estado, x, estado.getNexTarea(), s);
+                    estado.quitarTarea(procesador, t);
+                    estado.retrocederTarea();
                 }
             }
         }
 
     }
 }
-}
+

@@ -19,5 +19,9 @@ public class Main {
         ArrayList<Tarea> ts2 = (ArrayList<Tarea>) servicios.servicio2(false);
         for (Tarea t2 : ts2)
             System.out.println("Tarea " + t2.getId() + " Prioridad " + t2.getPrioridad()+ " Es critica: "+ t2.isCritica() + "\n");
+
+        System.out.println("******************* BACKTRACKING ***********************");
+        Solucion solucion = servicios.backtracking(50);
+        solucion.printSolucion();
     }
 }
