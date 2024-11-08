@@ -1,102 +1,89 @@
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class Solucion {
-
-    private HashMap<String, LinkedList<Tarea>> solucion;
-
+    private ArrayList<Procesador> solucion;
     private int cantEstados;
-
-    public Solucion() {
-        this.solucion = new HashMap<String, LinkedList<Tarea>>();
+    private int maxCantCriticas;
+    private int maxCantSumaNoRefrigerados;
+    public Solucion(ArrayList<Procesador> procesadores, int maxCantCriticas, int maxSuma) {
+        this.solucion = new ArrayList<Procesador>(procesadores);
         this.cantEstados = 0;
+        this.maxCantCriticas = maxCantCriticas;
+        this.maxCantSumaNoRefrigerados = maxSuma;
     }
 
-    public HashMap<String, LinkedList<Tarea>> getSolucion() {
+    public ArrayList<Procesador> getSolucion() {
         return this.solucion;
     }
 
     public boolean esMejorSolucion(Solucion solucion) {
-        if (solucion == null) {
-            return false;
-        }
-        System.out.println("MAP Mejor" + this.solucion.toString());
-        System.out.println("MAP 2" + solucion.getSolucion().toString());
-        int tiemposol = solucion.calcularTiempoMaximoSolucion();
-        int tiempoActual = this.calcularTiempoMaximoSolucion();
-        if (tiempoActual < 0 && tiemposol >= 0) {
+        int solucionthis = this.getTiempoMaximoSolucion();
+        int solucionsol = solucion.getTiempoMaximoSolucion();
+        System.out.println("Solucion " + solucionthis + " LA OTRA "+ solucionsol);
+        if (solucionthis > 0 && solucionsol < 0)
             return true;
-        }
-        return (tiemposol < tiempoActual);
+        return  solucionsol > solucionthis;
     }
 
-    public void cambiarASolucionOptimizada(Solucion solucion) {
-        //this.solucion = (HashMap<String, LinkedList<Tarea>>) solucion.getSolucion().clone();
-        this.solucion.clear();
-        for (Map.Entry<String, LinkedList<Tarea>> entry : solucion.getSolucion().entrySet()) {
-            LinkedList<Tarea> tareasaux = (LinkedList<Tarea>) entry.getValue().clone();
-            this.solucion.put(entry.getKey(), tareasaux);
+    /**
+     * @return Retorna el tiempo acumulado del procesador que más tiempo acumulado tiene
+     */
+    public int getTiempoMaximoSolucion(){
+        if (this.solucion.size() == 0)
+            return -1;
+        int mayor = -1;
+        Iterator iter = this.solucion.iterator();
+        while (iter.hasNext()){
+            Procesador p = (Procesador)iter.next();
+            if (p.getTiempoTotalTareasAsignadas() > mayor)
+                mayor = p.getTiempoTotalTareasAsignadas();
         }
+        return mayor;
+    }
+    public void cambiarASolucionOptimizada(Solucion solucion) {
+        this.solucion.clear();
+        this.solucion = new ArrayList<Procesador>(solucion.getSolucion());
     }
 
     public void addTareaASolucion(Procesador procesador, Tarea tarea) {
-        if (this.solucion.containsKey(procesador.getId())) {
-            LinkedList<Tarea> listaaux = this.solucion.get(procesador.getId());
-            if (listaaux != null) {
-                listaaux.addFirst(tarea);
-
-            } else {
-                listaaux = new LinkedList<Tarea>();
-                listaaux.addFirst(tarea);
-                this.solucion.put(procesador.getId(), listaaux);
-
+        for (int i=0; i< this.solucion.size();i++)
+            if (this.solucion.get(i).equals(procesador)) {
+                System.out.println("Agrega Tarea "+ tarea.getId());
+                this.solucion.get(i).addTarea(tarea);
+                break;
             }
-        } else {
-            LinkedList<Tarea> tareas = new LinkedList<Tarea>();
-            tareas.addFirst(tarea);
-            this.solucion.put(procesador.getId(), tareas);
-
-        }
     }
 
     public void removeTareaDeSolucion(Procesador procesador, Tarea tarea) {
-        if (this.solucion.containsKey(procesador.getId())) {
-            LinkedList<Tarea> listaaux = this.solucion.get(procesador.getId());
-            if (listaaux != null) {
-                listaaux.remove(tarea);
+        for (int i=0; i< this.solucion.size();i++)
+            if (this.solucion.get(i).equals(procesador)) {
+                System.out.println("QUITAR Tarea "+ tarea.getId());
+
+                this.solucion.get(i).deleteTarea(tarea);
+                break;
             }
-        }
     }
 
-    private int calcularTiempoMaximoSolucion() {
-        int mayor = -1;
-        for (Map.Entry<String, LinkedList<Tarea>> entry : solucion.entrySet()) {
-            int suma = this.calcularTiempoMaximoPorProcesador(entry.getKey());
-            if (suma > mayor) {
-                mayor = suma;
+    /**
+     *
+     * @param procesador
+     * @return Retorna el tiempo acumulado por todas las tareas asignadas que tiene un procesador
+     */
+    public int getTiempoProcesador(Procesador procesador){
+        for (int i=0; i< this.solucion.size();i++)
+            if (this.solucion.get(i).equals(procesador)) {
+                return this.solucion.get(i).getTiempoTotalTareasAsignadas();
             }
-        }
-        System.out.println("MAYOR " + mayor);
-        return mayor;
+        return -1;
     }
 
-    public int calcularTiempoMaximoPorProcesador(String key) {
-        LinkedList<Tarea> tareas = this.solucion.get(key);
-        int total = 0;
-        for (Tarea tarea : tareas) {
-            total += tarea.getTiempo();
-        }
-        return total;
-    }
-
-    public LinkedList<Tarea> getTareasAsociadas(Procesador procesador) {
-        if (this.solucion.containsKey(procesador.getId())) {
-            return this.solucion.get(procesador.getId());
-        }
-        return null;
+    public int getCantidadTareasCriticas(Procesador procesador){
+        for (int i=0; i< this.solucion.size();i++)
+            if (this.solucion.get(i).equals(procesador)) {
+                return this.solucion.get(i).getCantidadTareasCriticas();
+            }
+        return 0;
     }
 
     public void setCantEstados(int cant) {
@@ -109,16 +96,38 @@ public class Solucion {
 
     public void printSolucion() {
         System.out.println("La solución obtenida por medio del backtracking es:");
-        for (Map.Entry<String, LinkedList<Tarea>> entry : solucion.entrySet()) {
-            System.out.println("Procesador: " + entry.getKey());
+        Iterator iter = this.solucion.iterator();
+        while (iter.hasNext()) {
+            Procesador p = (Procesador) iter.next();
+            System.out.println("Procesador: " + p.getId());
             System.out.println("Tareas asociadas: ");
-            Iterator iter = (Iterator) entry.getValue().iterator();
-            while (iter.hasNext()) {
-                Tarea t = (Tarea) iter.next();
+            Iterator iterTareas = p.getTareasAsignadas().iterator();
+            while (iterTareas.hasNext()) {
+                Tarea t = (Tarea) iterTareas.next();
                 System.out.println(t.getId() + ": " + t.getNombre() + " - " + t.getTiempo());
             }
+            System.out.println("La cantidad de estados generados fueron: " + cantEstados);
         }
-        System.out.println("La cantidad de estados generados fueron: " + cantEstados);
     }
 
+    public Procesador getMejorProcesador(Tarea tarea){
+        if (this.solucion.size() == 0)
+            return null;
+        Procesador elMejor = null;
+        for (int i=0; i< this.solucion.size();i++){
+            if (this.cumple_condicion(this.solucion.get(i), tarea))
+                if (elMejor == null || (this.solucion.get(i).getTiempoTotalTareasAsignadas() < elMejor.getTiempoTotalTareasAsignadas()))
+                    elMejor = this.solucion.get(i);
+        }
+        return elMejor;
+    }
+
+    private boolean cumple_condicion(Procesador procesador, Tarea tarea){
+        boolean cumple = true;
+        if (tarea.isCritica() && procesador.getCantidadTareasCriticas() >= this.maxCantCriticas)
+            cumple = false;
+        if (!procesador.isRefrigerado() && procesador.getTiempoTotalTareasAsignadas() + tarea.getTiempo() > this.maxCantSumaNoRefrigerados)
+            cumple = false;
+        return cumple;
+    }
 }

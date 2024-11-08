@@ -76,8 +76,11 @@ public class Servicios {
     }
 
     public Solucion backtracking(int tiempoMax) {
-        Estado estado = new Estado(listaTareas);
-        Solucion solucion = new Solucion();
+        //Inicializamos una solucion inicial para inicializar el Estado
+        Solucion solucion_estado = new Solucion(this.listaProcesadores, this.maxCantCriticas,tiempoMax);
+        Estado estado = new Estado(this.listaTareas, solucion_estado);
+        //Inicializamos una solucion en la que guardaremos la mejor solucion
+        Solucion solucion = new Solucion(this.listaProcesadores, this.maxCantCriticas,tiempoMax);
         backtracking(estado, tiempoMax, estado.getNexTarea(), solucion);
         solucion.setCantEstados(estado.getCantidadEstados());
         return solucion;
@@ -86,10 +89,7 @@ public class Servicios {
     private void backtracking(Estado estado, int x, Tarea t, Solucion s) {
         //Si la tarea es null, quiere decir que ya se asignaron todas las tareas
         if (t == null) {
-            System.out.println("ENTRA");
-            if (s.esMejorSolucion(estado.getSolucion())) {
-                System.out.println("ENTRA MEJOR SOLUCION");
-
+            if (estado.getSolucion().esMejorSolucion(s)) {
                 s.cambiarASolucionOptimizada(estado.getSolucion());
 
             }
@@ -114,21 +114,22 @@ public class Servicios {
 
     public Solucion greedy(int x) {
         //inicializar solucion vacia
-        Solucion solucion = new Solucion();
+        Solucion solucion = new Solucion(this.listaProcesadores, this.maxCantCriticas,x);
         List<Tarea> listaTareasOrdenadas = new LinkedList<>(listaTareas);
         // Ordenar la nueva lista por tiempo
         listaTareasOrdenadas.sort(Comparator.comparing(Tarea::getTiempo).reversed());
-
+        boolean tiene_solucion = true;
         for (Tarea tarea : listaTareasOrdenadas) {
+            Procesador procesador = solucion.getMejorProcesador(tarea);
+            if (procesador != null){
+                solucion.addTareaASolucion(procesador,tarea);
+            }
+            else
+                tiene_solucion = false;
             //Si el procesador es refrigerado o no es refrigerado y el tiempo de las tareas asociadas + la nueva tarea es menor que la indicada por el usuario
             // Y la tarea no es critica, o es critica y aun no llega al maximo de tareas criticas permitidas
-            for (Procesador p : listaProcesadores) {
-                if (tarea.esLaMejoropcion(p, x, solucion, maxCantCriticas)) {
-                    solucion.addTareaASolucion(p, tarea);
-                }
-            }
         }
-        if (solucion.esValida()) {
+        if (tiene_solucion) {
             return solucion;
         } else {
             return null;

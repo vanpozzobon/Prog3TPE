@@ -46,7 +46,7 @@ public class Tarea {
             return false;
         }
         Tarea tarea = (Tarea) o;
-        return Objects.equals(id, tarea.id);
+        return tarea.getId() == this.getId();
     }
 
     @Override
@@ -54,14 +54,4 @@ public class Tarea {
         return Objects.hash(id);
     }
 
-    public boolean esLaMejoropcion(Procesador p, int x, Solucion s, int c) {
-        if (this.isCritica() && s.getTareasCriticas(p) < c) {
-
-        }
-        if (!p.isRefrigerado() && s.calcularTiempoMaximoPorProcesador(p.getId()) + this.getTiempo() < x) {
-            return true;
-        }
-
-        return true;
-    }
 }
