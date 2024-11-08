@@ -3,6 +3,7 @@ import java.util.*;
 
 public class Solucion {
     private ArrayList<Procesador> solucion;
+    private String mensaje;
     private int cantEstados;
     private int maxCantCriticas;
     private int maxCantSumaNoRefrigerados;
@@ -14,6 +15,7 @@ public class Solucion {
             this.solucion.add(p.clonar());
         }
         this.cantEstados = 0;
+        this.mensaje = "";
         this.maxCantCriticas = maxCantCriticas;
         this.maxCantSumaNoRefrigerados = maxSuma;
     }
@@ -89,7 +91,8 @@ public class Solucion {
         return 0;
     }
 
-    public void setCantEstados(int cant) {
+    public void setCantEstados(String mensaje , int cant) {
+        this.mensaje = mensaje;
         this.cantEstados = cant;
     }
 
@@ -111,7 +114,7 @@ public class Solucion {
             }
         }
         System.out.println("Tiempo maximo de ejecucion " + this.getTiempoMaximoSolucion());
-        System.out.println("La cantidad de estados generados fueron: " + cantEstados);
+        System.out.println(this.mensaje + cantEstados);
     }
 
     public Procesador getMejorProcesador(Tarea tarea){

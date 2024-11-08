@@ -89,7 +89,7 @@ public class Servicios {
         Solucion solucion = new Solucion(this.listaProcesadores, this.maxCantCriticas,tiempoMax);
 
         backtracking(estado, tiempoMax, estado.getNexTarea(),solucion);
-        solucion.setCantEstados(estado.getCantidadEstados());
+        solucion.setCantEstados("La cantidad de estados generados fueron: ",estado.getCantidadEstados());
         return solucion;
     }
 
@@ -140,6 +140,7 @@ public class Servicios {
                 tiene_solucion = false;
         }
         if (tiene_solucion) {
+            solucion.setCantEstados("La cantidad de candidatos conciderados: ",listaTareasOrdenadas.size());
             return solucion;
         } else {
             return null;
