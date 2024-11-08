@@ -7,7 +7,12 @@ public class Solucion {
     private int maxCantCriticas;
     private int maxCantSumaNoRefrigerados;
     public Solucion(ArrayList<Procesador> procesadores, int maxCantCriticas, int maxSuma) {
-        this.solucion = new ArrayList<Procesador>(procesadores);
+        this.solucion = new ArrayList<>();
+        Iterator iter = procesadores.iterator();
+        while (iter.hasNext()){
+            Procesador p = (Procesador)iter.next();
+            this.solucion.add(p.clonar());
+        }
         this.cantEstados = 0;
         this.maxCantCriticas = maxCantCriticas;
         this.maxCantSumaNoRefrigerados = maxSuma;
@@ -20,8 +25,7 @@ public class Solucion {
     public boolean esMejorSolucion(Solucion solucion) {
         int solucionthis = this.getTiempoMaximoSolucion();
         int solucionsol = solucion.getTiempoMaximoSolucion();
-        System.out.println("Solucion " + solucionthis + " LA OTRA "+ solucionsol);
-        if (solucionthis > 0 && solucionsol < 0)
+        if (solucionthis > 0 && solucionsol == 0)
             return true;
         return  solucionsol > solucionthis;
     }
@@ -30,9 +34,7 @@ public class Solucion {
      * @return Retorna el tiempo acumulado del procesador que más tiempo acumulado tiene
      */
     public int getTiempoMaximoSolucion(){
-        if (this.solucion.size() == 0)
-            return -1;
-        int mayor = -1;
+        int mayor = 0;
         Iterator iter = this.solucion.iterator();
         while (iter.hasNext()){
             Procesador p = (Procesador)iter.next();
@@ -43,13 +45,16 @@ public class Solucion {
     }
     public void cambiarASolucionOptimizada(Solucion solucion) {
         this.solucion.clear();
-        this.solucion = new ArrayList<Procesador>(solucion.getSolucion());
+        Iterator iter = solucion.getSolucion().iterator();
+        while (iter.hasNext()){
+            Procesador p = (Procesador)iter.next();
+            this.solucion.add(p.clonar());
+        }
     }
 
     public void addTareaASolucion(Procesador procesador, Tarea tarea) {
         for (int i=0; i< this.solucion.size();i++)
             if (this.solucion.get(i).equals(procesador)) {
-                System.out.println("Agrega Tarea "+ tarea.getId());
                 this.solucion.get(i).addTarea(tarea);
                 break;
             }
@@ -58,8 +63,6 @@ public class Solucion {
     public void removeTareaDeSolucion(Procesador procesador, Tarea tarea) {
         for (int i=0; i< this.solucion.size();i++)
             if (this.solucion.get(i).equals(procesador)) {
-                System.out.println("QUITAR Tarea "+ tarea.getId());
-
                 this.solucion.get(i).deleteTarea(tarea);
                 break;
             }
@@ -95,7 +98,7 @@ public class Solucion {
     }
 
     public void printSolucion() {
-        System.out.println("La solución obtenida por medio del backtracking es:");
+        System.out.println("La solución obtenida es:");
         Iterator iter = this.solucion.iterator();
         while (iter.hasNext()) {
             Procesador p = (Procesador) iter.next();
@@ -106,8 +109,10 @@ public class Solucion {
                 Tarea t = (Tarea) iterTareas.next();
                 System.out.println(t.getId() + ": " + t.getNombre() + " - " + t.getTiempo());
             }
-            System.out.println("La cantidad de estados generados fueron: " + cantEstados);
         }
+        System.out.println("Tiempo maximo de ejecucion " + this.getTiempoMaximoSolucion());
+
+            System.out.println("La cantidad de estados generados fueron: " + cantEstados);
     }
 
     public Procesador getMejorProcesador(Tarea tarea){

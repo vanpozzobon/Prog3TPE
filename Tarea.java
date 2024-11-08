@@ -5,11 +5,11 @@ public class Tarea {
 
     private String id;
     private String nombre;
-    private Integer tiempo;
-    private Boolean critica;
-    private Integer prioridad;
+    private int tiempo;
+    private boolean critica;
+    private int prioridad;
 
-    public Tarea(String id, String nombre, Integer tiempo, Boolean critica, Integer prioridad) {
+    public Tarea(String id, String nombre, int tiempo, boolean critica, int prioridad) {
         this.id = id;
         this.nombre = nombre;
         this.tiempo = tiempo;
@@ -29,11 +29,11 @@ public class Tarea {
         return tiempo;
     }
 
-    public Boolean isCritica() {
+    public boolean isCritica() {
         return critica;
     }
 
-    public Integer getPrioridad() {
+    public int getPrioridad() {
         return prioridad;
     }
 
@@ -54,4 +54,9 @@ public class Tarea {
         return Objects.hash(id);
     }
 
+    public Tarea clonar(){
+        Tarea t = new Tarea(this.getId(),this.getNombre(),this.getTiempo(),this.isCritica(),this.getPrioridad());
+        return t;
+
+    }
 }

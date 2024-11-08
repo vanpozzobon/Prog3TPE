@@ -17,7 +17,7 @@ public class Servicios {
     private Arbol arbolTareas;
     private ArrayList<Procesador> listaProcesadores;
     private int maxCantCriticas = 2;
-
+    private Solucion solucion_back;
     /*
      * Expresar la complejidad temporal del constructor.
      */
@@ -80,18 +80,17 @@ public class Servicios {
         Solucion solucion_estado = new Solucion(this.listaProcesadores, this.maxCantCriticas,tiempoMax);
         Estado estado = new Estado(this.listaTareas, solucion_estado);
         //Inicializamos una solucion en la que guardaremos la mejor solucion
-        Solucion solucion = new Solucion(this.listaProcesadores, this.maxCantCriticas,tiempoMax);
-        backtracking(estado, tiempoMax, estado.getNexTarea(), solucion);
-        solucion.setCantEstados(estado.getCantidadEstados());
-        return solucion;
+        this.solucion_back = new Solucion(this.listaProcesadores, this.maxCantCriticas,tiempoMax);
+        backtracking(estado, tiempoMax, estado.getNexTarea());
+        this.solucion_back.setCantEstados(estado.getCantidadEstados());
+        return this.solucion_back;
     }
 
-    private void backtracking(Estado estado, int x, Tarea t, Solucion s) {
+    private void backtracking(Estado estado, int x, Tarea t) {
         //Si la tarea es null, quiere decir que ya se asignaron todas las tareas
         if (t == null) {
-            if (estado.getSolucion().esMejorSolucion(s)) {
-                s.cambiarASolucionOptimizada(estado.getSolucion());
-
+            if (estado.getSolucion().esMejorSolucion(this.solucion_back)) {
+                this.solucion_back.cambiarASolucionOptimizada(estado.getSolucion());
             }
         } else {
             for (Procesador procesador : listaProcesadores) {
@@ -103,7 +102,7 @@ public class Servicios {
                         || (t.isCritica() && estado.getTareasCriticas(procesador) < this.maxCantCriticas))) {
                     estado.agregarTarea(procesador, t);
                     estado.avanzarTarea();
-                    backtracking(estado, x, estado.getNexTarea(), s);
+                    backtracking(estado, x, estado.getNexTarea());
                     estado.quitarTarea(procesador, t);
                     estado.retrocederTarea();
                 }
@@ -121,11 +120,11 @@ public class Servicios {
         boolean tiene_solucion = true;
         for (Tarea tarea : listaTareasOrdenadas) {
             Procesador procesador = solucion.getMejorProcesador(tarea);
-            if (procesador != null){
+            if (procesador != null)
                 solucion.addTareaASolucion(procesador,tarea);
-            }
             else
                 tiene_solucion = false;
+
             //Si el procesador es refrigerado o no es refrigerado y el tiempo de las tareas asociadas + la nueva tarea es menor que la indicada por el usuario
             // Y la tarea no es critica, o es critica y aun no llega al maximo de tareas criticas permitidas
         }

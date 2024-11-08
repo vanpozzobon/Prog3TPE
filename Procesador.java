@@ -79,4 +79,21 @@ public class Procesador {
     public LinkedList<Tarea> getTareasAsignadas(){
         return this.tareasAsignadas;
     }
+    public void setTareasAsignadas(LinkedList<Tarea> tareas){
+        Iterator iter = tareas.iterator();
+        this.tareasAsignadas.clear();
+        while (iter.hasNext()){
+            Tarea t = (Tarea)iter.next();
+            this.tareasAsignadas.addFirst(t.clonar());
+        }
+    }
+    public void setTiempoTotal(int tiempo){
+        this.tiempoTotal = tiempo;
+    }
+    public Procesador clonar(){
+        Procesador p = new Procesador(this.getId(),this.getCodigo(),this.isRefrigerado(),this.getAnio());
+        p.setTareasAsignadas(this.getTareasAsignadas());
+        p.setTiempoTotal(this.getTiempoTotalTareasAsignadas());
+        return p;
+    }
 }
