@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class Servicios {
     private Arbol arbolTareas;
     private ArrayList<Procesador> listaProcesadores;
     private int maxCantCriticas = 2;
+
     /*
      * Expresar la complejidad temporal del constructor.
      */
@@ -37,7 +39,6 @@ public class Servicios {
         /*for (Procesador procesador : procesadoresData) {
             listaProcesadores.add(procesador);
         }*/
-
     }
 
     /*
@@ -74,18 +75,6 @@ public class Servicios {
         return arbolTareas.obtenerTareasEnRango(prioridadInferior, prioridadSuperior);
     }
 
-    // funcion backtracking(Estado e, int x, Tarea t){
-    //     Si t == null
-    //     si e.es_solucion_optima()
-    //     e.cambiarSolucionOptima();	
-    //     sino
-    //         Obtengo todos los procesadores
-    //         Para cada procesador
-    //                 Si e.getSumaTiempo(procesador) + tarea.tiempo < x y 
-    //             (!tarea.esCritica() || (tarea.esCritica() y e.getCriticas(procesador) < 2)
-    //         e.agregarTarea(procesador,tarea)
-    //         backtracking(e,x,cant+1, e.getNextTarea())
-    //         e.quitarTarea(procesador,tarea)
     public Solucion backtracking(int tiempoMax) {
         Estado estado = new Estado(listaTareas);
         Solucion solucion = new Solucion();
@@ -97,8 +86,8 @@ public class Servicios {
     private void backtracking(Estado estado, int x, Tarea t, Solucion s) {
         //Si la tarea es null, quiere decir que ya se asignaron todas las tareas
         if (t == null) {
-                System.out.println("ENTRA");
-            if (s.esMejorSolucion(estado.getSolucion())){
+            System.out.println("ENTRA");
+            if (s.esMejorSolucion(estado.getSolucion())) {
                 System.out.println("ENTRA MEJOR SOLUCION");
 
                 s.cambiarASolucionOptimizada(estado.getSolucion());
@@ -108,10 +97,10 @@ public class Servicios {
             for (Procesador procesador : listaProcesadores) {
                 //Si el procesador es refrigerado o no es refrigerado y el tiempo de las tareas asociadas + la nueva tarea es menor que la indicada por el usuario
                 // Y la tarea no es critica, o es critica y aun no llega al maximo de tareas criticas permitidas
-                if ((procesador.isRefrigerado() ||
-                        (!procesador.isRefrigerado() && estado.getTiempo(procesador) + t.getTiempo() < x))
-                        && (!t.isCritica() ||
-                        (t.isCritica() && estado.getTareasCriticas(procesador) < this.maxCantCriticas))) {
+                if ((procesador.isRefrigerado()
+                        || (!procesador.isRefrigerado() && estado.getTiempo(procesador) + t.getTiempo() < x))
+                        && (!t.isCritica()
+                        || (t.isCritica() && estado.getTareasCriticas(procesador) < this.maxCantCriticas))) {
                     estado.agregarTarea(procesador, t);
                     estado.avanzarTarea();
                     backtracking(estado, x, estado.getNexTarea(), s);
@@ -122,5 +111,27 @@ public class Servicios {
         }
 
     }
-}
 
+    public Solucion greedy() {
+        //inicializar solucion vacia
+        Solucion solucion = new Solucion();
+        List<Tarea> listaTareasOrdenadas = new LinkedList<>(listaTareas);
+        // Ordenar la nueva lista por tiempo
+        listaTareasOrdenadas.sort(Comparator.comparing(Tarea::getTiempo).reversed());
+
+        for (Tarea tarea : listaTareasOrdenadas) {
+            //Si el procesador es refrigerado o no es refrigerado y el tiempo de las tareas asociadas + la nueva tarea es menor que la indicada por el usuario
+            // Y la tarea no es critica, o es critica y aun no llega al maximo de tareas criticas permitidas
+            for (Procesador p : listaProcesadores) {
+                if (tarea.esLaMejoropcion(p)) {
+                    solucion.addTareaASolucion(p, tarea);
+                }
+            }
+        }
+        if (solucion.esValida()) {
+            return solucion;
+        } else {
+            return null;
+        }
+    }
+}

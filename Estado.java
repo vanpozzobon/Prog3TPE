@@ -1,5 +1,4 @@
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -20,6 +19,10 @@ public class Estado {
         this.solucion = new Solucion();
     }
 
+    public Tarea[] getArregloTareas() {
+        return arregloTareas;
+    }
+
     public Tarea getNexTarea() {
         if (indice > arregloTareas.length - 1) {
             return null;
@@ -38,13 +41,13 @@ public class Estado {
 
     public void avanzarTarea() {
         indice++;
-        System.out.println("Avanza indice "+ indice);
+        System.out.println("Avanza indice " + indice);
 
     }
 
     public void retrocederTarea() {
         indice--;
-        System.out.println("Retrocede indice "+ indice);
+        System.out.println("Retrocede indice " + indice);
     }
 
     public void agregarTarea(Procesador p, Tarea t) {
@@ -57,24 +60,29 @@ public class Estado {
 
     public int getTiempo(Procesador p) {
         LinkedList<Tarea> tareas = this.solucion.getTareasAsociadas(p);
-        if (tareas == null)
+        if (tareas == null) {
             return 0;
+        }
         Iterator iterator = tareas.iterator();
         int tiempo = 0;
-        while (iterator.hasNext())
-            tiempo += (((Tarea)iterator.next()).getTiempo());
+        while (iterator.hasNext()) {
+            tiempo += (((Tarea) iterator.next()).getTiempo());
+        }
         return tiempo;
     }
 
     public int getTareasCriticas(Procesador p) {
         LinkedList<Tarea> tareas = this.solucion.getTareasAsociadas(p);
-        if (tareas == null)
+        if (tareas == null) {
             return 0;
+        }
         Iterator iterator = tareas.iterator();
         int criticas = 0;
-        while (iterator.hasNext())
-            if (((Tarea)iterator.next()).isCritica())
+        while (iterator.hasNext()) {
+            if (((Tarea) iterator.next()).isCritica()) {
                 criticas++;
+            }
+        }
         return criticas;
     }
 }
