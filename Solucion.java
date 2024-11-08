@@ -54,7 +54,7 @@ public class Solucion {
 
     public void addTareaASolucion(Procesador procesador, Tarea tarea) {
         for (int i=0; i< this.solucion.size();i++)
-            if (this.solucion.get(i).equals(procesador)) {
+            if (this.solucion.get(i).equals(procesador) && this.cumple_condicion(procesador,tarea)) {
                 this.solucion.get(i).addTarea(tarea);
                 break;
             }
@@ -111,8 +111,7 @@ public class Solucion {
             }
         }
         System.out.println("Tiempo maximo de ejecucion " + this.getTiempoMaximoSolucion());
-
-            System.out.println("La cantidad de estados generados fueron: " + cantEstados);
+        System.out.println("La cantidad de estados generados fueron: " + cantEstados);
     }
 
     public Procesador getMejorProcesador(Tarea tarea){

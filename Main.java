@@ -28,7 +28,7 @@ public class Main {
 
         System.out.println("******************* GREEDY ***********************");
         Solucion solucion1 = servicios.greedy(50);
-        solucion.printSolucion();
+        solucion1.printSolucion();
 
     }
 }
