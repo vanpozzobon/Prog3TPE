@@ -112,7 +112,7 @@ public class Servicios {
 
     }
 
-    public Solucion greedy() {
+    public Solucion greedy(int x) {
         //inicializar solucion vacia
         Solucion solucion = new Solucion();
         List<Tarea> listaTareasOrdenadas = new LinkedList<>(listaTareas);
@@ -123,7 +123,7 @@ public class Servicios {
             //Si el procesador es refrigerado o no es refrigerado y el tiempo de las tareas asociadas + la nueva tarea es menor que la indicada por el usuario
             // Y la tarea no es critica, o es critica y aun no llega al maximo de tareas criticas permitidas
             for (Procesador p : listaProcesadores) {
-                if (tarea.esLaMejoropcion(p)) {
+                if (tarea.esLaMejoropcion(p, x, solucion, maxCantCriticas)) {
                     solucion.addTareaASolucion(p, tarea);
                 }
             }

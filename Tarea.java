@@ -53,4 +53,15 @@ public class Tarea {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public boolean esLaMejoropcion(Procesador p, int x, Solucion s, int c) {
+        if (this.isCritica() && s.getTareasCriticas(p) < c) {
+
+        }
+        if (!p.isRefrigerado() && s.calcularTiempoMaximoPorProcesador(p.getId()) + this.getTiempo() < x) {
+            return true;
+        }
+
+        return true;
+    }
 }

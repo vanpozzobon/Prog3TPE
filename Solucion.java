@@ -83,7 +83,7 @@ public class Solucion {
         return mayor;
     }
 
-    private int calcularTiempoMaximoPorProcesador(String key) {
+    public int calcularTiempoMaximoPorProcesador(String key) {
         LinkedList<Tarea> tareas = this.solucion.get(key);
         int total = 0;
         for (Tarea tarea : tareas) {
@@ -120,4 +120,5 @@ public class Solucion {
         }
         System.out.println("La cantidad de estados generados fueron: " + cantEstados);
     }
+
 }
