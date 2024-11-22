@@ -4,40 +4,27 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Estado {
-
-    private Solucion solucion;
-    private int cantEstadosGenerados;
     private Tarea[] arregloTareas;
     private int indice = 0;
 
-    public Estado(LinkedList<Tarea> tarea, Solucion inicial) {
+    public Estado(LinkedList<Tarea> tarea) {
         arregloTareas = new Tarea[tarea.size()];
-        int indice = 0;
+        int i = 0;
         for (Tarea t : tarea) {
-            arregloTareas[indice] = t;
-            indice++;
+            arregloTareas[i] = t;
+            i++;
         }
-        this.solucion = inicial;
     }
 
-    public Tarea[] getArregloTareas() {
+    /*public Tarea[] getArregloTareas() {
         return arregloTareas;
-    }
+    }*/
 
     public Tarea getNexTarea() {
-        if (indice > arregloTareas.length - 1) {
+        if (indice == arregloTareas.length) {
             return null;
         }
-        this.cantEstadosGenerados++;
         return arregloTareas[indice];
-    }
-
-    public Solucion getSolucion() {
-        return this.solucion;
-    }
-
-    public Integer getCantidadEstados() {
-        return this.cantEstadosGenerados;
     }
 
     public void avanzarTarea() {
@@ -48,19 +35,8 @@ public class Estado {
         indice--;
     }
 
-    public void agregarTarea(Procesador p, Tarea t) {
-        solucion.addTareaASolucion(p, t);
+    public boolean es_estado_final(){
+        return this.indice == this.arregloTareas.length;
     }
 
-    public void quitarTarea(Procesador p, Tarea t) {
-        solucion.removeTareaDeSolucion(p, t);
-    }
-
-    public int getTiempo(Procesador p) {
-        return this.solucion.getTiempoProcesador(p);
-    }
-
-    public int getTareasCriticas(Procesador p) {
-        return this.solucion.getCantidadTareasCriticas(p);
-    }
 }

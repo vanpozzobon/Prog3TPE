@@ -34,25 +34,12 @@ public class Arbol {
             actual.setDer(this.addRecursivo(t, actual.getDer()));
         }
         return actual;
-        /*  if (actual.getTarea().getPrioridad() > t.getPrioridad()) {
-            if (actual.getIzq() == null) {
-                actual.setIzq(new TreeNode(t));
-            } else {
-                this.addRecursivo(t, actual.getIzq());
-            }
-        } else if (actual.getTarea().getPrioridad() < t.getPrioridad()) {
-            if (actual.getDer() == null) {
-                actual.setDer(new TreeNode(t));
-            } else {
-                this.addRecursivo(t, actual.getDer());
-            }
-        }
-         */
     }
 
     public List<Tarea> obtenerTareasEnRango(int a, int b) {
         LinkedList<Tarea> resultado = new LinkedList<>();
-        obtenerTareasEnRangoRecursivo(this.raiz, a, b, resultado);
+        if (this.raiz != null)
+            obtenerTareasEnRangoRecursivo(this.raiz, a, b, resultado);
         return resultado;
     }
 

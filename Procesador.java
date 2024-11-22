@@ -10,6 +10,7 @@ public class Procesador {
 
     private LinkedList<Tarea> tareasAsignadas;
     private int tiempoTotal;
+    private int cantTareasCriticas;
     public Procesador(String id, String codigo, boolean refrigerado, int anio) {
         this.id = id;
         this.codigo = codigo;
@@ -17,6 +18,7 @@ public class Procesador {
         this.anio = anio;
         this.tareasAsignadas = new LinkedList<Tarea>();
         this.tiempoTotal  = 0;
+        this.cantTareasCriticas = 0;
     }
 
     public String getId() {
@@ -40,7 +42,7 @@ public class Procesador {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Procesador that = (Procesador) o;
-        return Objects.equals(id, that.id);
+        return this.getId().equals(that.getId());
     }
 
     @Override
@@ -51,25 +53,20 @@ public class Procesador {
     public void addTarea(Tarea tarea){
         this.tareasAsignadas.addFirst(tarea);
         this.tiempoTotal += tarea.getTiempo();
+        if (tarea.isCritica())
+            this.cantTareasCriticas++;
     }
     public void deleteTarea(Tarea tarea){
         boolean eliminado = this.tareasAsignadas.remove(tarea);
-        if (eliminado)
+        if (eliminado) {
             this.tiempoTotal -= tarea.getTiempo();
+            if (tarea.isCritica())
+                this.cantTareasCriticas--;
+        }
     }
 
     public int getCantidadTareasCriticas(){
-        if (this.tareasAsignadas.size() == 0) {
-            return 0;
-        }
-        Iterator iterator = this.tareasAsignadas.iterator();
-        int criticas = 0;
-        while (iterator.hasNext()) {
-            if (((Tarea) iterator.next()).isCritica()) {
-                criticas++;
-            }
-        }
-        return criticas;
+       return this.cantTareasCriticas;
     }
 
     public int getTiempoTotalTareasAsignadas(){
@@ -80,20 +77,25 @@ public class Procesador {
         return this.tareasAsignadas;
     }
     public void setTareasAsignadas(LinkedList<Tarea> tareas){
-        Iterator iter = tareas.iterator();
+       /* Iterator iter = tareas.iterator();
         this.tareasAsignadas.clear();
         while (iter.hasNext()){
             Tarea t = (Tarea)iter.next();
-            this.tareasAsignadas.addFirst(t.clonar());
-        }
+            this.tareasAsignadas.addFirst(t);
+        }*/
+        this.tareasAsignadas = new LinkedList<>(tareas);
     }
     public void setTiempoTotal(int tiempo){
         this.tiempoTotal = tiempo;
+    }
+    private void setTareasCriticas(int tareasCriticas){
+        this.cantTareasCriticas = tareasCriticas;
     }
     public Procesador clonar(){
         Procesador p = new Procesador(this.getId(),this.getCodigo(),this.isRefrigerado(),this.getAnio());
         p.setTareasAsignadas(this.getTareasAsignadas());
         p.setTiempoTotal(this.getTiempoTotalTareasAsignadas());
+        p.setTareasCriticas(this.cantTareasCriticas);
         return p;
     }
 }

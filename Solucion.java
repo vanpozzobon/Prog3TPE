@@ -2,26 +2,14 @@
 import java.util.*;
 
 public class Solucion {
-    private ArrayList<Procesador> solucion;
-    private String mensaje;
+    private ArrayList<Procesador> procesadores;
     private int cantEstados;
-    private int maxCantCriticas;
-    private int maxCantSumaNoRefrigerados;
-    public Solucion(ArrayList<Procesador> procesadores, int maxCantCriticas, int maxSuma) {
-        this.solucion = new ArrayList<>();
-        Iterator iter = procesadores.iterator();
-        while (iter.hasNext()){
-            Procesador p = (Procesador)iter.next();
-            this.solucion.add(p.clonar());
-        }
-        this.cantEstados = 0;
-        this.mensaje = "";
-        this.maxCantCriticas = maxCantCriticas;
-        this.maxCantSumaNoRefrigerados = maxSuma;
+    public Solucion(ArrayList<Procesador> procesadores) {
+        this.procesadores = procesadores;
     }
 
-    public ArrayList<Procesador> getSolucion() {
-        return this.solucion;
+    public ArrayList<Procesador> getProcesadores() {
+        return this.procesadores;
     }
 
     public boolean esMejorSolucion(Solucion solucion) {
@@ -37,7 +25,7 @@ public class Solucion {
      */
     public int getTiempoMaximoSolucion(){
         int mayor = 0;
-        Iterator iter = this.solucion.iterator();
+        Iterator iter = this.procesadores.iterator();
         while (iter.hasNext()){
             Procesador p = (Procesador)iter.next();
             if (p.getTiempoTotalTareasAsignadas() > mayor)
@@ -45,96 +33,44 @@ public class Solucion {
         }
         return mayor;
     }
-    public void cambiarASolucionOptimizada(Solucion solucion) {
-        this.solucion.clear();
-        Iterator iter = solucion.getSolucion().iterator();
+
+    public Solucion copiarSolucion(){
+        ArrayList<Procesador> aux = new ArrayList<>();
+        Iterator iter = this.procesadores.iterator();
         while (iter.hasNext()){
             Procesador p = (Procesador)iter.next();
-            this.solucion.add(p.clonar());
+            aux.add(p.clonar());
         }
-    }
-
-    public void addTareaASolucion(Procesador procesador, Tarea tarea) {
-        for (int i=0; i< this.solucion.size();i++)
-            if (this.solucion.get(i).equals(procesador) && this.cumple_condicion(procesador,tarea)) {
-                this.solucion.get(i).addTarea(tarea);
-                break;
-            }
-    }
-
-    public void removeTareaDeSolucion(Procesador procesador, Tarea tarea) {
-        for (int i=0; i< this.solucion.size();i++)
-            if (this.solucion.get(i).equals(procesador)) {
-                this.solucion.get(i).deleteTarea(tarea);
-                break;
-            }
-    }
-
-    /**
-     *
-     * @param procesador
-     * @return Retorna el tiempo acumulado por todas las tareas asignadas que tiene un procesador
-     */
-    public int getTiempoProcesador(Procesador procesador){
-        for (int i=0; i< this.solucion.size();i++)
-            if (this.solucion.get(i).equals(procesador)) {
-                return this.solucion.get(i).getTiempoTotalTareasAsignadas();
-            }
-        return -1;
-    }
-
-    public int getCantidadTareasCriticas(Procesador procesador){
-        for (int i=0; i< this.solucion.size();i++)
-            if (this.solucion.get(i).equals(procesador)) {
-                return this.solucion.get(i).getCantidadTareasCriticas();
-            }
-        return 0;
-    }
-
-    public void setCantEstados(String mensaje , int cant) {
-        this.mensaje = mensaje;
-        this.cantEstados = cant;
-    }
-
-    public int getCantEstados() {
-        return this.cantEstados;
+        Solucion sol = new Solucion(aux);
+        sol.setEstadosGenerados(this.cantEstados);
+        return sol;
     }
 
     public void printSolucion() {
-        System.out.println("La solución obtenida es:");
-        Iterator iter = this.solucion.iterator();
+        Iterator iter = this.procesadores.iterator();
         while (iter.hasNext()) {
             Procesador p = (Procesador) iter.next();
-            System.out.println("Procesador: " + p.getId());
+            System.out.println("Procesador: " + p.getId() + " -> Refrigerado: " + p.isRefrigerado());
             System.out.println("Tareas asociadas: ");
             Iterator iterTareas = p.getTareasAsignadas().iterator();
             while (iterTareas.hasNext()) {
                 Tarea t = (Tarea) iterTareas.next();
-                System.out.println(t.getId() + ": " + t.getNombre() + " - " + t.getTiempo());
+                System.out.println(t.getId() + ": " + t.getNombre() + " - " + t.getTiempo() + " Es critica: "+ t.isCritica());
             }
+            System.out.println("----------------------------------------------------------");
         }
         System.out.println("Tiempo maximo de ejecucion " + this.getTiempoMaximoSolucion());
-        System.out.println(this.mensaje + cantEstados);
     }
 
-    public Procesador getMejorProcesador(Tarea tarea){
-        if (this.solucion.size() == 0)
-            return null;
-        Procesador elMejor = null;
-        for (int i=0; i< this.solucion.size();i++){
-            if (this.cumple_condicion(this.solucion.get(i), tarea))
-                if (elMejor == null || (this.solucion.get(i).getTiempoTotalTareasAsignadas() < elMejor.getTiempoTotalTareasAsignadas()))
-                    elMejor = this.solucion.get(i);
-        }
-        return elMejor;
+    public void incrementarEstadoGenerado(){
+        this.cantEstados++;
     }
 
-    private boolean cumple_condicion(Procesador procesador, Tarea tarea){
-        boolean cumple = true;
-        if (tarea.isCritica() && procesador.getCantidadTareasCriticas() >= this.maxCantCriticas)
-            cumple = false;
-        if (!procesador.isRefrigerado() && procesador.getTiempoTotalTareasAsignadas() + tarea.getTiempo() > this.maxCantSumaNoRefrigerados)
-            cumple = false;
-        return cumple;
+    public void setEstadosGenerados(int cantidad){
+        this.cantEstados = cantidad;
+    }
+
+    public int getCantEstadosGenerados(){
+        return this.cantEstados;
     }
 }

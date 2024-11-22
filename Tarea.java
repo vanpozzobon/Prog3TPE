@@ -46,7 +46,7 @@ public class Tarea {
             return false;
         }
         Tarea tarea = (Tarea) o;
-        return tarea.getId() == this.getId();
+        return tarea.getId().equals(this.getId());
     }
 
     @Override
@@ -54,9 +54,7 @@ public class Tarea {
         return Objects.hash(id);
     }
 
-    public Tarea clonar(){
-        Tarea t = new Tarea(this.getId(),this.getNombre(),this.getTiempo(),this.isCritica(),this.getPrioridad());
-        return t;
 
-    }
+
+
 }
